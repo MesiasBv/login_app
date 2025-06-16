@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .table-container {
+            margin: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="table-container">
+    <h2>Lista de Usuarios</h2>
+    <table id="userTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Tipo de Usuario</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <!-- Los datos de los usuarios se cargarán aquí -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+// Función para obtener los datos de la base de datos
+async function fetchUserData() {
+    try {
+        const response = await fetch('http://localhost:5000/api/getUsers');  // Endpoint para obtener los usuarios
+        const data = await response.json();
+
+        if (response.ok) {
+            // Llena la tabla con los datos
+            const tableBody = document.getElementById('tableBody');
+            data.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.IDUSUARIO}</td>
+                    <td>${user.LOGEO}</td>
+                    <td>${user.IDTIPO_USUARIO}</td>
+                    <td>${user.ESTADO}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        } else {
+            console.error('Error al obtener los datos');
+        }
+    } catch (error) {
+        console.error('Error en la conexión', error);
+    }
+}
+
+// Llamar a la función para obtener los datos cuando la página cargue
+window.onload = fetchUserData;
+</script>
+
+</body>
+</html>
