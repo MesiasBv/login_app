@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .login-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .message {
+            text-align: center;
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Login</h2>
+    <form id="loginForm">
+        <input type="text" id="username" placeholder="Usuario" required />
+        <input type="password" id="password" placeholder="Contraseña" required />
+        <button type="submit">Iniciar sesión</button>
+    </form>
+    <div class="message" id="message"></div>
+</div>
+
+<script>
+    const form = document.getElementById('loginForm');
+    const messageDiv = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();  // Evitar que se recargue la página al enviar el formulario
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Mostrar mensaje de espera
+        messageDiv.textContent = 'Cargando...';
+
+        try {
+            // Realizar la solicitud al backend
+            const response = await fetch('http://localhost:5000/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // Login exitoso, redirigir a otra página
+                messageDiv.textContent = `Bienvenido, usuario ${result.userId}!`;
+                messageDiv.style.color = 'green';
+
+                // Redirigir a otra página
+                setTimeout(() => {
+                    window.location.href = "dashboard.html";  // Redirige a la página de dashboard
+                }, 2000);  // Espera 2 segundos antes de redirigir
+            } else {
+                // Mostrar error de login
+                messageDiv.textContent = result.msg || 'Error desconocido';
+                messageDiv.style.color = 'red';
+            }
+        } catch (error) {
+            messageDiv.textContent = 'Error en la conexión al servidor';
+            messageDiv.style.color = 'red';
+        }
+    });
+</script>
+
+</body>
+</html>
